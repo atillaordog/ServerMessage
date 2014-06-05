@@ -5,7 +5,7 @@ namespace ServerMessage\Validation;
 use ServerMessage\Interfaces\Validation as ValidationInterface;
 use ServerMessage\Entity\Message as MessageEntity;
 
-class MessageValidation extends ValidationInterface
+class MessageValidation implements ValidationInterface
 {
 	private $_errors = array();
 	

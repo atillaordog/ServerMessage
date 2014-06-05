@@ -7,17 +7,26 @@ namespace ServerMessage;
  */
 class Config
 {	
-	public $storage_class = null;
+	public $storage = 'db';
 	public $validate_on_send = true;
+	public $db = array(
+		'server' => '',
+		'user' => '',
+		'pass' => '',
+		'database' => '',
+		'table_name' => 'server_messages'
+	);
 	
-	public function __construct()
+	public function __construct(Array $config = array())
 	{
-		$file = SERVERMESSAGE_ROOT.'config.php';
-		
-		$config = array();
-		if ( file_exists($file) )
+		if ( empty($config) )
 		{
-			$config = include($file);
+			$file = SERVERMESSAGE_ROOT.'config.php';
+			
+			if ( file_exists($file) )
+			{
+				$config = include($file);
+			}
 		}
 		
 		$self_config = get_object_vars($this);

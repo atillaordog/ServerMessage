@@ -5,6 +5,7 @@ namespace ServerMessage\Storage;
 use ServerMessage\Interfaces\Storage as StorageInterface;
 use ServerMessage\MessageException as MessageException;
 use ServerMessage\Entity\Message as MessageEntity;
+use mysqli;
 
 /**
  * The DB storage extension of the server message, uses mysqli PHP extension
@@ -16,7 +17,7 @@ class DB implements StorageInterface
 		'user' => '',
 		'pass' => '',
 		'database' => '',
-		'table_name' => 'servermessages'
+		'table_name' => 'server_messages'
 	);
 	
 	private $_db = null;
@@ -72,6 +73,21 @@ class DB implements StorageInterface
 	}
 	
 	public function add(MessageEntity $message)
+	{
+		
+	}
+	
+	public function update(MessageEntity $message, Array $fields, Array $by_fields)
+	{
+		
+	}
+	
+	public function delete(MessageEntity $message, Array $by_fields)
+	{
+		
+	}
+	
+	public function get(Array $by_params)
 	{
 		
 	}

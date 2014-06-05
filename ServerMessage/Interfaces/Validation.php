@@ -11,7 +11,7 @@ interface Validation
 	 * @param ServerMessage\Entity\Message $message
 	 * @return boolean
 	 */
-	public function valid(MessageInterface $message);
+	public function valid(MessageEntity $message);
 	
 	/**
 	 * Returns the errors that got set upon validation

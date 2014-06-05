@@ -6,6 +6,7 @@ use ServerMessage\MessageException as MessageException;
 use ServerMessage\Entity\Message as MessageEntity;
 use ServerMessage\Interfaces\Validation as ValidationInterface;
 use ServerMessage\Validation\MessageValidation as MessageValidation;
+use ServerMessage\Storage\DB as DBStorage;
 
 class ServerMessage
 {
@@ -19,24 +20,18 @@ class ServerMessage
 	
 	/**
 	 * Constructor.
+	 * @param array $config Can overwrite default config upon creation
 	 * If no storage class is provided, the config default will be used
 	 * @param ServerMessage\Interfaces\Storage $storage
 	 * @param ServerMessage\Interfaces\Validation $validation The validation class that validates the message, can be set externally
 	 */
-	public function __construct(StorageInterface $storage = null, ValidationInterface $validation = null)
+	public function __construct(Array $config = array(), StorageInterface $storage = null, ValidationInterface $validation = null)
 	{
-		$this->_config = new Config();
+		$this->_config = new Config($config);
 		
 		if ( $storage == null )
 		{
-			try
-			{
-				$this->_storage = new $this->_config->storage_class;
-			}
-			catch(Exception $e)
-			{
-				throw new MessageException('Could not instantiate storage class.');
-			}
+			$this->_storage = new DBStorage($this->_config->db);
 		}
 		else
 		{
