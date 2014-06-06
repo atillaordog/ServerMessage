@@ -74,21 +74,113 @@ class DB implements StorageInterface
 	
 	public function add(MessageEntity $message)
 	{
+		$data = (array)$message;
 		
+		unset($data['id']);
+		
+		$sql = 'INSERT INTO '.$this->_config['table_name'].'('.implode(',', array_keys($message)).') VALUES(';
+		
+		foreach( $data as $key => $value )
+		{
+			if ( is_numeric($value) )
+			{
+				$sql .= $value.',';
+			}
+			else
+			{
+				$sql .= '"'.$value.'",';
+			}
+		}
+		
+		$sql = rtrim($sql, ',');
+		
+		$sql .= ')';
+		
+		if ( $this->_db->query($sql) )
+		{
+			return $this->_db->insert_id;
+		}
+		
+		return 0;
 	}
 	
 	public function update(MessageEntity $message, Array $fields, Array $by_fields)
 	{
+		$sql = 'UPDATE '.$this->_config['table_name'].' SET ';
 		
+		$where = ' WHERE ';
+		$data = (array)$message;
+		
+		foreach( $data as $key => $value )
+		{
+			if ( in_array($key, $fields) )
+			{
+				$sql .= $key.' = '.((is_numeric($value))? $value : '"'.$value.'"').',';
+			}
+			
+			if ( in_array($key, $by_fields) )
+			{
+				$where .= $key.' = '.((is_numeric($value))? $value : '"'.$value.'"').',';
+			}
+		}
+		
+		$sql = rtrim($sql, ',');
+		$where = rtrim($where, ',');
+		
+		if ( $this->_db->query($sql.$where) )
+		{
+			return true;
+		}
+		
+		return false;
 	}
 	
 	public function delete(MessageEntity $message, Array $by_fields)
 	{
+		$sql = 'DELETE FROM '.$this->_config['table_name'].' WHERE ';
 		
+		$data = (array)$message;
+		
+		foreach( $data as $key => $value )
+		{
+			if ( in_array($key, $by_fields) )
+			{
+				$sql .= $key.' = '.((is_numeric($value))? $value : '"'.$value.'"').',';
+			}
+		}
+		
+		$sql = rtrim($sql, ',');
+		
+		if ( $this->_db->query($sql) )
+		{
+			return true;
+		}
+		
+		return false;
 	}
 	
 	public function get(Array $by_params)
 	{
+		$sql = 'SELECT * FROM '.$this->_config['table_name'].' WHERE';
 		
+		foreach( $by_params as $key => $value )
+		{
+			$sql .= $key.' = '.((is_numeric($value))? $value : '"'.$value.'"').',';
+		}
+		
+		$res = $this->_db->query($sql);
+		
+		$tmp = array();
+		
+		$res->data_seek(0);
+		while ( $row = $res->fetch_assoc() ) 
+		{
+			$message = new MessageEntity();
+			$message->inject_data($row);
+			
+			$tmp[] = $message;
+		}
+		
+		return $tmp;
 	}
 }
