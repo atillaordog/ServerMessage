@@ -16,6 +16,11 @@ class Config
 		'database' => '',
 		'table_name' => 'server_messages'
 	);
+	private $statuses = array(
+		0 => 'Unapproved',
+		1 => 'Unread',
+		2 => 'Read'
+	);
 	
 	public function __construct(Array $config = array())
 	{

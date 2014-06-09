@@ -108,7 +108,7 @@ class DB implements StorageInterface
 	{
 		$sql = 'UPDATE '.$this->_config['table_name'].' SET ';
 		
-		$where = ' WHERE ';
+		$where = ' WHERE (1 = 1) ';
 		$data = (array)$message;
 		
 		foreach( $data as $key => $value )
@@ -120,7 +120,24 @@ class DB implements StorageInterface
 			
 			if ( in_array($key, $by_fields) )
 			{
-				$where .= $key.' = '.((is_numeric($value))? $value : '"'.$value.'"').',';
+				if ( !is_array($value) )
+				{
+					$where .= ' AND '.$key.' = '.((is_numeric($value))? $value : '"'.$value.'"').',';
+				}
+				else
+				{
+					$are_numbers = array_filter($value, 'is_numeric');
+					if ( count($are_numbers) == count($value) )
+					{
+						$in = '('.implode(',', $value).')';
+					}
+					else
+					{
+						$in = '("'.implode('", "', $value).'")';
+					}
+					
+					$where .= ' AND '.$key.' IN '.$in.',';
+				}
 			}
 		}
 		
@@ -137,7 +154,7 @@ class DB implements StorageInterface
 	
 	public function delete(MessageEntity $message, Array $by_fields)
 	{
-		$sql = 'DELETE FROM '.$this->_config['table_name'].' WHERE ';
+		$sql = 'DELETE FROM '.$this->_config['table_name'].' WHERE (1 = 1) ';
 		
 		$data = (array)$message;
 		
@@ -145,7 +162,24 @@ class DB implements StorageInterface
 		{
 			if ( in_array($key, $by_fields) )
 			{
-				$sql .= $key.' = '.((is_numeric($value))? $value : '"'.$value.'"').',';
+				if ( !is_array($value) )
+				{
+					$sql .= ' AND '.$key.' = '.((is_numeric($value))? $value : '"'.$value.'"').',';
+				}
+				else
+				{
+					$are_numbers = array_filter($value, 'is_numeric');
+					if ( count($are_numbers) == count($value) )
+					{
+						$in = '('.implode(',', $value).')';
+					}
+					else
+					{
+						$in = '("'.implode('", "', $value).'")';
+					}
+					
+					$where .= ' AND '.$key.' IN '.$in.',';
+				}
 			}
 		}
 		
@@ -159,13 +193,24 @@ class DB implements StorageInterface
 		return false;
 	}
 	
-	public function get(Array $by_params)
+	public function get(Array $by_params, $limit = null, $offset = null)
 	{
-		$sql = 'SELECT * FROM '.$this->_config['table_name'].' WHERE';
+		$sql = 'SELECT * FROM '.$this->_config['table_name'].' WHERE (1 = 1) ';
 		
 		foreach( $by_params as $key => $value )
 		{
-			$sql .= $key.' = '.((is_numeric($value))? $value : '"'.$value.'"').',';
+			$sql .= ' AND'.$key.' = '.((is_numeric($value))? $value : '"'.$value.'"').',';
+		}
+		
+		$sql = rtrim($sql, ',');
+		
+		if ( $limit != null )
+		{
+			$sql .= ' LIMIT '.(int)$limit;
+			if ( $offset != null )
+			{
+				$sql .= ' OFFSET '.(int)$offset;
+			}
 		}
 		
 		$res = $this->_db->query($sql);
@@ -182,5 +227,17 @@ class DB implements StorageInterface
 		}
 		
 		return $tmp;
+	}
+	
+	public function exists()
+	{
+		$res = $this->_db->query('SHOW TABLES LIKE '.$this->_config['table_name']);
+		
+		return ($res->num_rows == 1);
+	}
+	
+	public function destroy_storage()
+	{
+		$this->_db->query('DROP TABLE IF EXISTS '.$this->_config['table_name']);
 	}
 }

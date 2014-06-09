@@ -72,6 +72,36 @@ class ServerMessage
 		$this->_message->reciever_type = (string)$sender_type;
 	}
 	
+	public function set_meta($meta)
+	{
+		// We encode anything into a string that comes in meta
+		$this->_message->meta = base64_encode( serialize($meta) );
+	}
+	
+	/**
+	 * Set the status of one or more messages
+	 * @param array|int $id
+	 * @param int $status Must be one from the predefined statuses
+	 * @return boolean
+	 */
+	public function change_status($id, $status)
+	{
+		if ( !array_key_exists($status, $this->_config->statuses) )
+		{
+			throw new MessageException('Status has to be from the predefined values.');
+		}
+		
+		if ( !is_array($id) )
+		{
+			$id = array($id);
+		}
+		
+		$this->_message->id = $id;
+		$this->_message->status = $status;
+		
+		return $this->_storage->update($this->_message, array('status'), array('id'));
+	}
+	
 	/**
 	 * After the parts of the message have been set, saves to storage
 	 * If validation is set to true in config, validates before sending
@@ -100,5 +130,147 @@ class ServerMessage
 		}
 		
 		return false;
+	}
+	
+	/**
+	 * Gets the inbox of a given object
+	 * @param int $obj_id The id of the reciever
+	 * @param string $obj_type The type of the reciever
+	 * @param int $status Optional, taken in consideration if not null
+	 * @param int $limit
+	 * @param int $offset
+	 * @return array Returns an array with message objects
+	 */
+	public function get_inbox($obj_id, $obj_type, $status = null, $limit = null, $offset = null)
+	{
+		$data = array(
+			'reciever_id' => (int)$obj_id, 
+			'reciever_type' => (string)$obj_type
+		);
+		
+		if ( $status != null )
+		{
+			$data['status'] = (int)$status;
+		}
+		
+		$result = $this->_storage->get($data, $limit, $offset);
+		
+		for ( $i = 0, $m = count($result); $i < $m; $i++ )
+		{
+			$result[$i]->meta = unserialize( base64_decode($result[$i]->meta) );
+		}
+		
+		return $result;
+	}
+	
+	/**
+	 * Gets the outbox of a given object
+	 * @param int $obj_id The id of the sender
+	 * @param string $obj_type The type of the sender
+	 * @param int $status Optional, taken in consideration if not null
+	 * @param int $limit
+	 * @param int $offset
+	 * @return array Returns an array with message objects
+	 */
+	public function get_outbox($obj_id, $obj_type, $status = null, $limit = null, $offset = null)
+	{
+		$data = array(
+			'reciever_id' => (int)$obj_id, 
+			'reciever_type' => (string)$obj_type
+		);
+		
+		if ( $status != null )
+		{
+			$data['status'] = (int)$status;
+		}
+		
+		$result = $this->_storage->get($data, $limit, $offset);
+		
+		for ( $i = 0, $m = count($result); $i < $m; $i++ )
+		{
+			$result[$i]->meta = unserialize( base64_decode($result[$i]->meta) );
+		}
+		
+		return $result;
+	}
+	
+	/**
+	 * Get all the messages, pagination dependent
+	 * @param int $limit
+	 * @param int $offset
+	 * @return array
+	 */
+	public function get_all($limit = null, $offset = null)
+	{
+		$result = $this->_storage->get(array(), $limit, $offset);
+		
+		for ( $i = 0, $m = count($result); $i < $m; $i++ )
+		{
+			$result[$i]->meta = unserialize( base64_decode($result[$i]->meta) );
+		}
+		
+		return $result;
+	}
+	
+	/**
+	 * Get a single message by ID
+	 * @param int $message_id
+	 * @return ServerMessage\Entity\Message
+	 */
+	public function get_single($message_id)
+	{
+		$result = $this->_storage->get(array('id' => (int)$message_id), 1);
+		
+		if ( empty($result) )
+		{
+			return new MessageEntity();
+		}
+		
+		return $result[0];
+	}
+	
+	/**
+	 * Deletes one or more messages
+	 * @param array|int $message_id
+	 * @return boolean
+	 */
+	public function delete_message($message_id)
+	{
+		if ( !is_array($message_id) )
+		{
+			$message_id = array($message_id);
+		}
+		
+		$this->_message->id = $message_id;
+		
+		return $this->_storage->delete($this->_message, $message_id);
+	}
+	
+	/**
+	 * Checks if storage exists and can be used
+	 * @return boolean
+	 */
+	public function storage_exists()
+	{
+		return $this->_storage->exists();
+	}
+	
+	/**
+	 * Creates storage if that does not exist
+	 */
+	public function install_storage()
+	{
+		if ( !$this->_storage->exists() )
+		{
+			$this->_storage->create_storage();
+		}
+	}
+	
+	/**
+	 * Clear out the storage created for messages
+	 */
+	public function remove_storage()
+	{
+		$this->_storage->destroy_storage();
 	}
 }

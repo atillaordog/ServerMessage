@@ -43,7 +43,20 @@ interface Storage
 	/**
 	 * Gets message(s) by given field-value pairs
 	 * @param Array $by_params An associative array with field-value pairs. Ex. array('sender_id' => 23, 'sender_type' => 'support')
+	 * @param int $limit Limit for pagination purposes
+	 * @param int $offset Offset for pagination purposes
 	 * @return Array returns an array with the found results, every element being of type ServerMessage\Entity\Message
 	 */
-	public function get(Array $by_params);
+	public function get(Array $by_params, $limit, $offset);
+	
+	/**
+	 * Checks if the storage exists and can be used
+	 * @return boolean
+	 */
+	public function exists();
+	
+	/**
+	 * Destroys the created storage if needed
+	 */
+	public function destroy_storage();
 }
