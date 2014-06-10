@@ -7,6 +7,8 @@ use ServerMessage\Entity\Message as MessageEntity;
 use ServerMessage\Interfaces\Validation as ValidationInterface;
 use ServerMessage\Validation\MessageValidation as MessageValidation;
 use ServerMessage\Storage\DB as DBStorage;
+use ServerMessage\Filters\Email as EmailFilter;
+use ServerMessage\Filters\Url as UrlFilter;
 
 class ServerMessage
 {
@@ -17,6 +19,8 @@ class ServerMessage
 	private $_message;
 	
 	private $_validation;
+	
+	private $_predef_filters = array();
 	
 	/**
 	 * Constructor.
@@ -48,6 +52,9 @@ class ServerMessage
 		{
 			$this->_validation = $validation;
 		}
+		
+		$this->_predef_filters['email'] = new EmailFilter();
+		$this->_predef_filters['url'] = new UrlFilter();
 	}
 	
 	public function set_subject($subject = '')
@@ -213,20 +220,23 @@ class ServerMessage
 	}
 	
 	/**
-	 * Get a single message by ID
-	 * @param int $message_id
+	 * Get a single message by ID or the current message set
+	 * @param int $message_id If null, returns current message
 	 * @return ServerMessage\Entity\Message
 	 */
-	public function get_single($message_id)
+	public function get_single($message_id = null)
 	{
-		$result = $this->_storage->get(array('id' => (int)$message_id), 1);
-		
-		if ( empty($result) )
+		if ( $message_id != null )
 		{
-			return new MessageEntity();
+			$result = $this->_storage->get(array('id' => (int)$message_id), 1);
+		
+			if ( !empty($result) )
+			{
+				$this->_message = $result[0];
+			}
 		}
 		
-		return $result[0];
+		return $this->_message;
 	}
 	
 	/**
@@ -272,5 +282,43 @@ class ServerMessage
 	public function remove_storage()
 	{
 		$this->_storage->destroy_storage();
+	}
+	
+	/**
+	 * Filters the given message
+	 * @param ServerMessage\Entity\Message $message Optional, if not set, the inner message will be used
+	 * @param array $filters Optional, can be used to add filters (Ex. array('facebook' => new FacebookFilter()))
+	 * The filters need to extend the filter interface
+	 * @param boolean $subject_only Filter only the subject
+	 * @param boolean $delete_found Remove the found matches from the message
+	 * @return array Returns an associative array with the filtered message and the found matches
+	 */
+	public function filter_message(MessageEntity $message = null, Array $filters = array(), $subject_only = false, $delete_found = false)
+	{
+		if ( $message == null )
+		{
+			$message = $this->_message;
+		}
+		
+		$found_matches = array();
+		foreach ( $this->_predef_filters as $key => $filter )
+		{
+			$message = $filter->filter($message, (boolean)$subject_only, (boolean)$delete_found);
+			$found_matches[$key] = $filter->get_found_matches();
+		}
+		
+		foreach ( $filters as $key => $filter )
+		{
+			if ( is_a($filter, 'ServerMessage\Interfaces\Filter') )
+			{
+				$message = $filter->filter($message, (boolean)$subject_only, (boolean)$delete_found);
+				$found_matches[$key] = $filter->get_found_matches();
+			}
+		}
+		
+		return array(
+			'message' => $message,
+			'found_matches' => $found_matches
+		);
 	}
 }
