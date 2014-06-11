@@ -110,6 +110,25 @@ class ServerMessage
 	}
 	
 	/**
+	 * Set one or more messages to read or unread
+	 * @param array|int $id
+	 * @param boolean $read True or false
+	 * @return boolean
+	 */
+	public function set_read($id, $read)
+	{	
+		if ( !is_array($id) )
+		{
+			$id = array($id);
+		}
+		
+		$this->_message->id = $id;
+		$this->_message->read = ((boolean)$read)? 1 : 0;
+		
+		return $this->_storage->update($this->_message, array('read'), array('id'));
+	}
+	
+	/**
 	 * After the parts of the message have been set, saves to storage
 	 * If validation is set to true in config, validates before sending
 	 * @return boolean

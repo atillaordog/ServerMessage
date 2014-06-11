@@ -18,6 +18,7 @@ class Message extends BaseEntity
 	public $sender_type = '';
 	public $reciever_id = null;
 	public $reciever_type = '';
+	public $read = 0;
 	public $status = 0;
 	public $meta = '';
 }

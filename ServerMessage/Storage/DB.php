@@ -56,6 +56,7 @@ class DB implements StorageInterface
 			`sender_type` VARCHAR(255) NULL,
 			`reciever_id` INT UNSIGNED NULL,
 			`reciever_type` VARCHAR(255) NULL,
+			`read` TINYINT UNSIGNED NULL,
 			`status` TINYINT UNSIGNED NULL,
 			`meta` TEXT NULL,
 			PRIMARY KEY (`id`)
