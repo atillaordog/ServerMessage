@@ -3,15 +3,16 @@
 namespace ServerMessage\Filters;
 
 use ServerMessage\Interfaces\Filter as FilterInterface;
+use ServerMessage\Entity\Message as MessageEntity;
 
-class Url extends FilterInterface
+class Url implements FilterInterface
 {
 	private $matches = array(
 		'subject' => array(),
 		'body' => array()
 	);
 	
-	public function filter(ServerMessage $message, $subject_only = false, $delete_found = false)
+	public function filter(MessageEntity $message, $subject_only = false, $delete_found = false)
 	{
 		$subject_matches = array();
 		preg_match_all(
