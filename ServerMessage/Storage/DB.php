@@ -79,7 +79,7 @@ class DB implements StorageInterface
 		
 		unset($data['id']);
 		
-		$sql = 'INSERT INTO '.$this->_config['table_name'].'('.implode(',', array_keys($message)).') VALUES(';
+		$sql = 'INSERT INTO '.$this->_config['table_name'].'('.implode(',', array_keys($data)).') VALUES(';
 		
 		foreach( $data as $key => $value )
 		{
