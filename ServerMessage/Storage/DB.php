@@ -79,7 +79,7 @@ class DB implements StorageInterface
 		
 		unset($data['id']);
 		
-		$sql = 'INSERT INTO '.$this->_config['table_name'].'('.implode(',', array_keys($data)).') VALUES(';
+		$sql = 'INSERT INTO '.$this->_config['table_name'].'(`'.implode('`,`', array_keys($data)).'`) VALUES(';
 		
 		foreach( $data as $key => $value )
 		{
@@ -116,14 +116,14 @@ class DB implements StorageInterface
 		{
 			if ( in_array($key, $fields) )
 			{
-				$sql .= $key.' = '.((is_numeric($value))? $value : '"'.$value.'"').',';
+				$sql .= '`'.$key.'` = '.((is_numeric($value))? $value : '"'.$value.'"').',';
 			}
 			
 			if ( in_array($key, $by_fields) )
 			{
 				if ( !is_array($value) )
 				{
-					$where .= ' AND '.$key.' = '.((is_numeric($value))? $value : '"'.$value.'"').',';
+					$where .= ' AND `'.$key.'` = '.((is_numeric($value))? $value : '"'.$value.'"').',';
 				}
 				else
 				{
@@ -137,7 +137,7 @@ class DB implements StorageInterface
 						$in = '("'.implode('", "', $value).'")';
 					}
 					
-					$where .= ' AND '.$key.' IN '.$in.',';
+					$where .= ' AND `'.$key.'` IN '.$in.',';
 				}
 			}
 		}
@@ -165,7 +165,7 @@ class DB implements StorageInterface
 			{
 				if ( !is_array($value) )
 				{
-					$sql .= ' AND '.$key.' = '.((is_numeric($value))? $value : '"'.$value.'"').',';
+					$sql .= ' AND `'.$key.'` = '.((is_numeric($value))? $value : '"'.$value.'"').',';
 				}
 				else
 				{
@@ -179,7 +179,7 @@ class DB implements StorageInterface
 						$in = '("'.implode('", "', $value).'")';
 					}
 					
-					$where .= ' AND '.$key.' IN '.$in.',';
+					$where .= ' AND `'.$key.'` IN '.$in.',';
 				}
 			}
 		}
@@ -200,7 +200,7 @@ class DB implements StorageInterface
 		
 		foreach( $by_params as $key => $value )
 		{
-			$sql .= ' AND'.$key.' = '.((is_numeric($value))? $value : '"'.$value.'"').',';
+			$sql .= ' AND `'.$key.'` = '.((is_numeric($value))? $value : '"'.$value.'"').',';
 		}
 		
 		$sql = rtrim($sql, ',');
