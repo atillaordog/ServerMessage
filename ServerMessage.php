@@ -75,8 +75,8 @@ class ServerMessage
 	
 	public function set_reciever($reciever_id = 0, $reciever_type = '')
 	{
-		$this->_message->reciever_id = (int)$sender_id;
-		$this->_message->reciever_type = (string)$sender_type;
+		$this->_message->reciever_id = (int)$receiever_id;
+		$this->_message->reciever_type = (string)$reciever_type;
 	}
 	
 	public function set_meta($meta)
