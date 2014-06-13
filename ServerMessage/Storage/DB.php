@@ -200,10 +200,8 @@ class DB implements StorageInterface
 		
 		foreach( $by_params as $key => $value )
 		{
-			$sql .= ' AND `'.$key.'` = '.((is_numeric($value))? $value : '"'.$value.'"').',';
+			$sql .= ' AND `'.$key.'` = '.((is_numeric($value))? $value : '"'.$value.'"');
 		}
-		
-		$sql = rtrim($sql, ',');
 		
 		if ( $limit != null )
 		{
