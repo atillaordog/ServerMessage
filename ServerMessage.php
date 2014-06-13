@@ -159,6 +159,15 @@ class ServerMessage
 	}
 	
 	/**
+	 * If sending was not successful, we get the validation errors
+	 * @return array
+	 */
+	public function get_validation_errors()
+	{
+		return $this->_validation->get_errors();
+	}
+	
+	/**
 	 * Gets the inbox of a given object
 	 * @param int $obj_id The id of the reciever
 	 * @param string $obj_type The type of the reciever
