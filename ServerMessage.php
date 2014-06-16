@@ -349,4 +349,9 @@ class ServerMessage
 			'found_matches' => $found_matches
 		);
 	}
+	
+	public function get_statuses()
+	{
+		return $this->_config->statuses;
+	}
 }
