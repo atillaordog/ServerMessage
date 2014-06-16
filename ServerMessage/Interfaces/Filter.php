@@ -19,4 +19,9 @@ interface Filter
 	 * After the filtering has been done, returns the found matches
 	 */
 	public function get_found_matches();
+	
+	/**
+	 * Total matches found
+	 */
+	public function total_matches();
 }

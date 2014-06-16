@@ -12,6 +12,8 @@ class Url implements FilterInterface
 		'body' => array()
 	);
 	
+	private $_total_matches = 0;
+	
 	public function filter(MessageEntity $message, $subject_only = false, $delete_found = false)
 	{
 		$subject_matches = array();
@@ -22,6 +24,7 @@ class Url implements FilterInterface
 		);
 		
 		$this->matches['subject'] = $subject_matches[0];
+		$this->_total_matches += count($subject_matches[0]);
 		
 		$body_matches = array(array());
 		if ( !$subject_only )
@@ -33,6 +36,7 @@ class Url implements FilterInterface
 			);
 			
 			$this->matches['body'] = $body_matches[0];
+			$this->_total_matches += count($body_matches[0]);
 		}
 		
 		if ( $delete_found )
@@ -59,5 +63,10 @@ class Url implements FilterInterface
 	public function get_found_matches()
 	{
 		return $this->matches;
+	}
+	
+	public function total_matches()
+	{
+		return $this->_total_matches;
 	}
 }

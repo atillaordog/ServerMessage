@@ -75,7 +75,7 @@ class ServerMessage
 	
 	public function set_reciever($reciever_id = 0, $reciever_type = '')
 	{
-		$this->_message->reciever_id = (int)$receiever_id;
+		$this->_message->reciever_id = (int)$reciever_id;
 		$this->_message->reciever_type = (string)$reciever_type;
 	}
 	
@@ -328,11 +328,13 @@ class ServerMessage
 			$message = $this->_message;
 		}
 		
+		$total_threats = 0;
 		$found_matches = array();
 		foreach ( $this->_predef_filters as $key => $filter )
 		{
 			$message = $filter->filter($message, (boolean)$subject_only, (boolean)$delete_found);
 			$found_matches[$key] = $filter->get_found_matches();
+			$total_threats += $filter->total_matches();
 		}
 		
 		foreach ( $filters as $key => $filter )
@@ -341,12 +343,14 @@ class ServerMessage
 			{
 				$message = $filter->filter($message, (boolean)$subject_only, (boolean)$delete_found);
 				$found_matches[$key] = $filter->get_found_matches();
+				$total_threats += $filter->total_matches();
 			}
 		}
 		
 		return array(
 			'message' => $message,
-			'found_matches' => $found_matches
+			'found_matches' => $found_matches,
+			'total_threats' => $total_threats
 		);
 	}
 	
