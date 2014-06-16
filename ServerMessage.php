@@ -210,8 +210,8 @@ class ServerMessage
 	public function get_outbox($obj_id, $obj_type, $status = null, $limit = null, $offset = null)
 	{
 		$data = array(
-			'reciever_id' => (int)$obj_id, 
-			'reciever_type' => (string)$obj_type
+			'sender_id' => (int)$obj_id, 
+			'sender_type' => (string)$obj_type
 		);
 		
 		if ( $status != null )
