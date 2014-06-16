@@ -319,9 +319,10 @@ class ServerMessage
 	 * The filters need to extend the filter interface
 	 * @param boolean $subject_only Filter only the subject
 	 * @param boolean $delete_found Remove the found matches from the message
+	 * @param boolean $save If true, saves the message back to storage (used when deleting threads)
 	 * @return array Returns an associative array with the filtered message and the found matches
 	 */
-	public function filter_message(MessageEntity $message = null, Array $filters = array(), $subject_only = false, $delete_found = false)
+	public function filter_message(MessageEntity $message = null, Array $filters = array(), $subject_only = false, $delete_found = false, $save = false)
 	{
 		if ( $message == null )
 		{
@@ -345,6 +346,11 @@ class ServerMessage
 				$found_matches[$key] = $filter->get_found_matches();
 				$total_threats += $filter->total_matches();
 			}
+		}
+		
+		if ( (boolean)$save )
+		{
+			$this->_storage->update($message, array('subject', 'body'), array('id'));
 		}
 		
 		return array(
