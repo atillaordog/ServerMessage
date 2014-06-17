@@ -16,6 +16,8 @@ class Url implements FilterInterface
 	
 	public function filter(MessageEntity $message, $subject_only = false, $delete_found = false)
 	{
+		$this->_total_matches = 0;
+		
 		$subject_matches = array();
 		preg_match_all(
 			'/\b(?:(?:https?|ftp|file):\/\/|www\.|ftp\.)[-A-Z0-9+&@#\/%=~_|$?!:,.]*[A-Z0-9+&@#\/%=~_|$]/i',

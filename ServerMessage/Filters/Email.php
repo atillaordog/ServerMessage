@@ -16,6 +16,8 @@ class Email implements FilterInterface
 	
 	public function filter(MessageEntity $message, $subject_only = false, $delete_found = false)
 	{
+		$this->_total_matches = 0;
+		
 		$subject_matches = array();
 		preg_match_all(
 			"/[a-z0-9!#$%&'*+\/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+\/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/i",
