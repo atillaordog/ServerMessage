@@ -50,6 +50,12 @@ interface Storage
 	public function get(Array $by_params, $limit, $offset);
 	
 	/**
+	 * Gets the total number of message by given params
+	 * @param Array $by_params An associative array with field-value pairs. Ex. array('sender_id' => 23, 'sender_type' => 'support')
+	 */
+	public function get_total(Array $by_params);
+	
+	/**
 	 * Checks if the storage exists and can be used
 	 * @return boolean
 	 */

@@ -236,6 +236,24 @@ class DB implements StorageInterface
 		return $tmp;
 	}
 	
+	public function get_total(Array $by_params)
+	{
+		$sql = 'SELECT COUNT(id) as nr FROM '.$this->_config['table_name'].' WHERE (1 = 1) ';
+		
+		foreach( $by_params as $key => $value )
+		{
+			$sql .= ' AND `'.$key.'` = '.((is_numeric($value))? $value : '"'.$value.'"');
+		}
+		
+		$sql .= ' LIMIT 1';
+		
+		$res = $this->_db->query($sql);
+		
+		$row = $res->fetch_row();
+		
+		return (int)$row['nr'];
+	}
+	
 	public function exists()
 	{
 		$res = $this->_db->query('SHOW TABLES LIKE '.$this->_config['table_name']);
