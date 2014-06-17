@@ -157,6 +157,35 @@ class ServerMessage
 		
 		return false;
 	}
+	/**
+	 * Updates the loaded message in the storage
+	 * It will validate the message if set in config
+	 * @return boolean
+	 */
+	public function update()
+	{
+		$valid = true;
+		if ( $this->_config->validate_on_send )
+		{
+			$valid = $this->_validation->valid($this->_message);
+		}
+		
+		if ( $valid )
+		{
+			try
+			{
+				$this->_storage->update($this->_message, array('subject', 'body', 'meta'), array('id'));
+			}
+			catch(Exception $e)
+			{
+				throw new MessageException('Could not save message.');
+			}
+			
+			return true;
+		}
+		
+		return false;
+	}
 	
 	/**
 	 * If sending was not successful, we get the validation errors
