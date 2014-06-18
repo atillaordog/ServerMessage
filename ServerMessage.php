@@ -143,6 +143,8 @@ class ServerMessage
 		
 		if ( $valid )
 		{
+			$this->_message->created_on = date('Y-m-d H:i:s');
+			
 			try
 			{
 				$this->_storage->add($this->_message);
@@ -157,6 +159,7 @@ class ServerMessage
 		
 		return false;
 	}
+	
 	/**
 	 * Updates the loaded message in the storage
 	 * It will validate the message if set in config
@@ -172,6 +175,8 @@ class ServerMessage
 		
 		if ( $valid )
 		{
+			$this->_message->updated_on = date('Y-m-d H:i:s');
+			
 			try
 			{
 				$this->_storage->update($this->_message, array('subject', 'body', 'meta'), array('id'));
@@ -212,7 +217,7 @@ class ServerMessage
 			'reciever_type' => (string)$obj_type
 		);
 		
-		if ( $status != null )
+		if ( $status !== null )
 		{
 			$data['status'] = (int)$status;
 		}
@@ -228,19 +233,29 @@ class ServerMessage
 	}
 	
 	/**
-	 * Gets the number of unread messages
+	 * Gets the number of messages in inbox
 	 * @param int $obj_id The id of the reciever
 	 * @param string $obj_type The type of the reciever
+	 * @param int $status (Optional) Status filter
+	 * @param int $read (Optional) Read filter
 	 * @return int
 	 */
-	public function get_total_unread($obj_id, $obj_type)
+	public function get_total_inbox($obj_id, $obj_type, $status = null, $read = null)
 	{
 		$data = array(
 			'reciever_id' => (int)$obj_id, 
-			'reciever_type' => (string)$obj_type,
-			'read' => 0,
-			'status' => 1
+			'reciever_type' => (string)$obj_type
 		);
+		
+		if ( $read !== null )
+		{
+			$data['read'] = (int)$read;
+		}
+		
+		if ( $status !== null )
+		{
+			$data['status'] = (int)$status;
+		}
 		
 		return $this->_storage->get_total($data);
 	}
@@ -261,7 +276,7 @@ class ServerMessage
 			'sender_type' => (string)$obj_type
 		);
 		
-		if ( $status != null )
+		if ( $status !== null )
 		{
 			$data['status'] = (int)$status;
 		}
@@ -280,19 +295,23 @@ class ServerMessage
 	 * Gets the number of unapproved messages
 	 * @param int $obj_id The id of the reciever
 	 * @param string $obj_type The type of the reciever
+	 * @param int $status (Optional) Status filter
 	 * @return int
 	 */
-	public function get_total_unapproved($obj_id, $obj_type)
+	public function get_total_outbox($obj_id, $obj_type, $status = null)
 	{
 		$data = array(
 			'sender_id' => (int)$obj_id, 
-			'sender_type' => (string)$obj_type,
-			'status' => 0
+			'sender_type' => (string)$obj_type
 		);
+		
+		if ( $status !== null )
+		{
+			$data['status'] = (int)$status;
+		}
 		
 		return $this->_storage->get_total($data);
 	}
-	
 	
 	/**
 	 * Get all the messages, pagination dependent
