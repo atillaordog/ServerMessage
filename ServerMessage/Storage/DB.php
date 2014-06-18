@@ -251,7 +251,7 @@ class DB implements StorageInterface
 		
 		$row = $res->fetch_row();
 		
-		return (int)$row['nr'];
+		return (int)$row[0];
 	}
 	
 	public function exists()

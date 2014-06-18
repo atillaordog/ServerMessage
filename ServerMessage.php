@@ -228,6 +228,24 @@ class ServerMessage
 	}
 	
 	/**
+	 * Gets the number of unread messages
+	 * @param int $obj_id The id of the reciever
+	 * @param string $obj_type The type of the reciever
+	 * @return int
+	 */
+	public function get_total_unread($obj_id, $obj_type)
+	{
+		$data = array(
+			'reciever_id' => (int)$obj_id, 
+			'reciever_type' => (string)$obj_type,
+			'read' => 0,
+			'status' => 1
+		);
+		
+		return $this->_storage->get_total($data);
+	}
+	
+	/**
 	 * Gets the outbox of a given object
 	 * @param int $obj_id The id of the sender
 	 * @param string $obj_type The type of the sender
@@ -259,6 +277,24 @@ class ServerMessage
 	}
 	
 	/**
+	 * Gets the number of unapproved messages
+	 * @param int $obj_id The id of the reciever
+	 * @param string $obj_type The type of the reciever
+	 * @return int
+	 */
+	public function get_total_unapproved($obj_id, $obj_type)
+	{
+		$data = array(
+			'sender_id' => (int)$obj_id, 
+			'sender_type' => (string)$obj_type,
+			'status' => 0
+		);
+		
+		return $this->_storage->get_total($data);
+	}
+	
+	
+	/**
 	 * Get all the messages, pagination dependent
 	 * @param int $limit
 	 * @param int $offset
@@ -274,6 +310,14 @@ class ServerMessage
 		}
 		
 		return $result;
+	}
+	
+	/**
+	 * Get the total numebr of messages
+	 */
+	public function get_total_messages()
+	{
+		return $this->_storage->get_total(array());
 	}
 	
 	/**
