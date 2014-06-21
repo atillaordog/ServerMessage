@@ -321,7 +321,7 @@ class ServerMessage
 	 */
 	public function get_all($limit = null, $offset = null)
 	{
-		$result = $this->_storage->get(array(), $limit, $offset);
+		$result = $this->_storage->get(array(), $limit, $offset, array('created_on' => 'DESC'));
 		
 		for ( $i = 0, $m = count($result); $i < $m; $i++ )
 		{
@@ -353,6 +353,7 @@ class ServerMessage
 			if ( !empty($result) )
 			{
 				$this->_message = $result[0];
+				$this->_message->meta = unserialize( base64_decode($this->_message->meta) );
 			}
 		}
 		
