@@ -457,4 +457,12 @@ class ServerMessage
 	{
 		return $this->_config->statuses;
 	}
+	
+	/**
+	 * We need to reset our message entity sometimes, so we do that with this function
+	 */
+	public function reset_inner_message()
+	{
+		$this->_message = new MessageEntity();
+	}
 }
