@@ -147,7 +147,7 @@ class ServerMessage
 			
 			try
 			{
-				$this->_storage->add($this->_message);
+				$this->_message->id = $this->_storage->add($this->_message);
 			}
 			catch(Exception $e)
 			{
