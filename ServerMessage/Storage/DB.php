@@ -30,25 +30,25 @@ class DB implements StorageInterface
 			{
 				$this->_config[$key] = $config[$key];
 			}
+		}
 			
-			if ( !class_exists('mysqli') )
-			{
-				throw new MessageException('Mysqli module not installed.');
-			}
-			
-			if (strpos($this->_config['server'], ':') !== false)
-			{
-				list($server, $port) = explode(':', $this->_config['server']);
-				$this->_db = @new mysqli($server, $this->_config['user'], $this->_config['pass'], $this->_config['database'], $port);
-			}
-			else
-			{
-				$this->_db = @new mysqli($this->_config['server'], $this->_config['user'], $this->_config['pass'], $this->_config['database']);
-			}
-			
-			if ($this->_db->connect_errno) {
-				throw new MessageException("Failed to connect to MySQL: (" . $this->_db->connect_errno . ") " . $this->_db->connect_error);
-			}
+		if ( !class_exists('mysqli') )
+		{
+			throw new MessageException('Mysqli module not installed.');
+		}
+		
+		if (strpos($this->_config['server'], ':') !== false)
+		{
+			list($server, $port) = explode(':', $this->_config['server']);
+			$this->_db = @new mysqli($server, $this->_config['user'], $this->_config['pass'], $this->_config['database'], $port);
+		}
+		else
+		{
+			$this->_db = @new mysqli($this->_config['server'], $this->_config['user'], $this->_config['pass'], $this->_config['database']);
+		}
+		
+		if ($this->_db->connect_errno) {
+			throw new MessageException("Failed to connect to MySQL: (" . $this->_db->connect_errno . ") " . $this->_db->connect_error);
 		}
 	}
 	
