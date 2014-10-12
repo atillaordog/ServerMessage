@@ -256,7 +256,7 @@ class DB implements StorageInterface
 	
 	public function exists()
 	{
-		$res = $this->_db->query('SHOW TABLES LIKE '.$this->_config['table_name']);
+		$res = $this->_db->query('SHOW TABLES LIKE "'.$this->_config['table_name'].'"');
 		
 		return ($res->num_rows == 1);
 	}

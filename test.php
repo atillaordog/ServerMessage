@@ -1,17 +1,7 @@
-ServerMessage
-=============
-
-This is a helper library that gets together a nice little way of sending messages on the sever (can be used for chat, too)
-
-It has a very simple way of doing things and is built from modules, so parts in it can be easily changed.
-
-It has a filter system for getting out emails and phone numbers.
-
-The data is saved in a way that one message system can be used for multiple types of messages. 
-
-Here is a very basic example of the usage of the class
-
-```php
+<?php
+/**
+ * Test file for demonstrating the workings of this system
+ */
 include('autoload.php');
 
 // Instantiate the class using explicit values
@@ -52,5 +42,4 @@ $message->update();
 // To reset inner message, you can call
 $message->reset_inner_message();
 
-// For the full list of things this class can do, see the descriptions of the functions inside the main class file
-```
+// For the full list of things this class can do, see documentation

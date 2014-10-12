@@ -23,20 +23,21 @@ class Config
 	
 	public function __construct(Array $config = array())
 	{
-		if ( empty($config) )
+		$file = SERVERMESSAGE_ROOT.'config.php';
+		if ( file_exists($file) )
 		{
-			$file = SERVERMESSAGE_ROOT.'config.php';
-			
-			if ( file_exists($file) )
-			{
-				$config = include($file);
-			}
+			$file_config = include($file);
 		}
 		
 		$self_config = get_object_vars($this);
 		
 		foreach ( $self_config as $key => $value )
 		{
+			if ( array_key_exists($key, $file_config) )
+			{
+				$this->$key = $file_config[$key];
+			}
+			
 			if ( array_key_exists($key, $config) )
 			{
 				$this->$key = $config[$key];

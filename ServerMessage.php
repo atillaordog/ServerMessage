@@ -332,7 +332,7 @@ class ServerMessage
 	}
 	
 	/**
-	 * Get the total numebr of messages
+	 * Get the total number of messages
 	 */
 	public function get_total_messages()
 	{
@@ -362,7 +362,7 @@ class ServerMessage
 	
 	/**
 	 * Deletes one or more messages
-	 * @param array|int $message_id
+	 * @param array | int $message_id
 	 * @return boolean
 	 */
 	public function delete_message($message_id)
@@ -412,7 +412,7 @@ class ServerMessage
 	 * The filters need to extend the filter interface
 	 * @param boolean $subject_only Filter only the subject
 	 * @param boolean $delete_found Remove the found matches from the message
-	 * @param boolean $save If true, saves the message back to storage (used when deleting threads)
+	 * @param boolean $save If true, saves the message back to storage (used when deleting threats)
 	 * @return array Returns an associative array with the filtered message and the found matches
 	 */
 	public function filter_message(MessageEntity $message = null, Array $filters = array(), $subject_only = false, $delete_found = false, $save = false)
@@ -453,6 +453,9 @@ class ServerMessage
 		);
 	}
 	
+	/**
+	 * Return the inner statuses set in config
+	 */
 	public function get_statuses()
 	{
 		return $this->_config->statuses;
