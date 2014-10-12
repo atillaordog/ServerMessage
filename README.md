@@ -5,7 +5,7 @@ This is a helper library that gets together a nice little way of sending message
 
 It has a very simple way of doing things and is built from modules, so parts in it can be easily changed.
 
-It has a filter system for getting out emails and phone numbers.
+It has a filter system for getting out emails and urls.
 
 The data is saved in a way that one message system can be used for multiple types of messages. 
 
